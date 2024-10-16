@@ -26,7 +26,7 @@ return new class extends Migration
 
             $table->string('student_number')->unique();
             $table->string('first_name', 50);
-            $table->string('middle_name', 50)->default('-');
+            $table->string('middle_name', 50)->nullable();
             $table->string('last_name',50);
 
             $table->string('email')->unique();
