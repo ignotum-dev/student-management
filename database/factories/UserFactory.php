@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+use App\Models\Role;
+use App\Models\Course;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,12 +26,31 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $dob = fake()->dateTimeBetween('-40 years', '-18 years');
+
         return [
-            'name' => fake()->name(),
+            'role_id' => Role::pluck('id')->random(),
+
+            'course_id' => Course::pluck('id')->random(),
+
+            'student_number' => (string) fake()->unique()->numerify('01223#####'),
+            'first_name' => fake()->firstName,
+            'middle_name' => fake()->optional()->firstName,
+            'last_name' => fake()->lastName,
+
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+
+            'year' => fake()->randomElement(['First Year', 'Second Year', 'Third Year', 'Fourth Year']),
+
+            'dob' => $dob,
+            'age' => $this->calculateAge($dob),
+            'sex' => fake()->randomElement(['Male', 'Female']),
+
+            'c_address' => fake()->address,
+            'h_address' => fake()->address
         ];
     }
 
@@ -40,5 +62,10 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    private function calculateAge($dob)
+    {
+        return Carbon::parse($dob)->age;
     }
 }
