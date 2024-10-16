@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Role;
 use App\Models\Course;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,21 +15,33 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('student_number');
-            $table->string('name');
-            $table->string('first_name');
-            $table->string('middle_name')->nullable()->default('-');
-            $table->string('last_name');
+
+            $table->foreignIdFor(Role::class)
+                ->constrained()
+                ->onDelete('cascade');
+
+            $table->foreignIdFor(Course::class)
+                ->constrained()
+                ->onDelete('cascade');
+
+            $table->string('student_number')->unique();
+            $table->string('first_name', 50);
+            $table->string('middle_name', 50)->default('-');
+            $table->string('last_name',50);
+
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignIdFor(Course::class)->constrained()->onDelete('cascade');
+            
             $table->enum('year', ['First Year', 'Second Year', 'Third Year', 'Fourth Year']);
+            
             $table->date('dob');
             $table->unsignedTinyInteger('age');
             $table->enum('sex', ['Male', 'Female']);
-            $table->string('c_address');
-            $table->string('h_address');
+
+            $table->string('c_address', 255);
+            $table->string('h_address', 255);
+
             $table->rememberToken();
             $table->timestamps();
         });
