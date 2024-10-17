@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -11,7 +12,26 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(User::all());
+
+        // return response()->json(
+        //     User::select(
+        //         'id', 
+        //         'role_id', 
+        //         'course_id',
+        //         'student_number',
+        //         'first_name',
+        //         'middle_name',
+        //         'last_name',
+        //         'email',
+        //         'year',
+        //         'dob',
+        //         'age',
+        //         'sex',
+        //         'c_address',
+        //         'h_address'
+        //         )->get()
+        // );
     }
 
     /**
