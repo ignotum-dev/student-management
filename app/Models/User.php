@@ -18,11 +18,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'student_number',
+        'role_id',
+        'course_id',
+        'user_number',
         'first_name',
         'middle_name',
         'last_name',
-        'course_id', //foreign key
+        'email',
+        'password',
         'year',
         'dob',
         'age',
@@ -51,12 +54,37 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function courses() {
-        return $this->belongsTo(Course::class);
+    public function students() {
+        return $this->belongsTo(Student::class);
     }
 
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function isStudent()
+    {
+        return $this->role_id === 1;
+    }
+
+    public function isProgramChair()
+    {
+        return $this->role_id === 2;
+    }
+
+    public function isDean()
+    {
+        return $this->role_id === 3;
+    }
+
+    public function isAdmin()
+    {
+        return $this->role_id === 4;
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role_id === 5;
     }
 }
