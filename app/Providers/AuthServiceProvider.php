@@ -23,9 +23,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('index-student', function (User $current_user, User $user) {
-            return $current_user->id === $user->id;
-        });
+        // Gate::define('index-student', function (User $current_user, User $user) {
+        //     return $current_user->id === $user->id;
+        // });
 
         Gate::define('store-student', function (User $current_user, User $user) {
             return $current_user->id === $user->id;
