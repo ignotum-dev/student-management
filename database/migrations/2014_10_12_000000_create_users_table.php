@@ -17,14 +17,9 @@ return new class extends Migration
             $table->id();
 
             $table->foreignIdFor(Role::class)
-                ->constrained()
-                ->onDelete('cascade');
-
-            $table->foreignIdFor(Course::class)
-                ->constrained()
-                ->onDelete('cascade');
-
-            $table->string('student_number')->unique();
+            ->constrained()
+            ->onDelete('cascade');
+            
             $table->string('first_name', 50);
             $table->string('middle_name', 50)->nullable();
             $table->string('last_name',50);
@@ -32,8 +27,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
-            $table->enum('year', ['First Year', 'Second Year', 'Third Year', 'Fourth Year']);
             
             $table->date('dob');
             $table->unsignedTinyInteger('age');
