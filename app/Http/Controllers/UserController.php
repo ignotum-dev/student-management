@@ -8,16 +8,18 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    protected $studentController;
     protected $programChairController;
     protected $deanController;
     protected $adminController;
     protected $superAdminController;
     
 
-    public function __construct(ProgramChairController $programChairController, DeanController $deanController, AdminController $adminController, SuperAdminController $superAdminController)
+    public function __construct(StudentController $studentController, ProgramChairController $programChairController, DeanController $deanController, AdminController $adminController, SuperAdminController $superAdminController)
     {
         $this->middleware('auth:sanctum');
         $this->authorizeResource(User::class, 'user');
+        $this->studentController = $studentController;
         $this->programChairController = $programChairController;
         $this->deanController = $deanController;
         $this->adminController = $adminController;
@@ -55,7 +57,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // $user = auth()->user();
-
         // $this->authorize('index-student', $user);
         
         $validatedData = $request->validate([
@@ -84,24 +85,49 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // $this->authorize('show-student', $user);
-        if ($user->role_id === 1) {
-            return response()->json([
-                'message' => 'Data retrieved successfully.',
-                'data' => $user->makeHidden([
-                    'role_id',
-                    'email_verified_at',
-                    'created_at', 
-                    'updated_at']),
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Data retrieved successfully.',
-                'data' => $user->makeHidden([
-                    'email_verified_at',
-                    'created_at', 
-                    'updated_at']),
-            ]);
+        $current_user = auth()->user();
+        if ($current_user->isStudent()) {
+            return $this->studentController->show($user->id);
+        }
+
+        if ($current_user->isProgramChair()) {
+            if ($user->role_id == 1)
+                return $this->studentController->show($user->id);
+            elseif ($current_user->id == $user->id)
+                return $this->programChairController->show($user->id);
+        }
+
+        if ($current_user->isDean()) {
+            if ($user->role_id == 1)
+                return $this->studentController->show($user->id);
+            elseif ($user->role_id == 2)
+                return $this->programChairController->show($user->id);
+            elseif ($current_user->id == $user->id)
+                return $this->deanController->show($user->id);
+        }
+
+        if ($current_user->isAdmin()) {
+            if ($user->role_id == 1)
+                return $this->studentController->show($user->id);
+            elseif ($user->role_id == 2)
+                return $this->programChairController->show($user->id);
+            elseif ($user->role_id == 3)
+                return $this->deanController->show($user->id);
+            elseif ($current_user->id == $user->id)
+                return $this->adminController->show($user->id);
+        }
+
+        if ($current_user->isSuperAdmin()) {
+            if ($user->role_id == 1)
+                return $this->studentController->show($user->id);
+            elseif ($user->role_id == 2)
+                return $this->programChairController->show($user->id);
+            elseif ($user->role_id == 3)
+                return $this->deanController->show($user->id);
+            elseif ($user->role_id == 4)
+                return $this->adminController->show($user->id);
+            elseif ($user->role_id == 5)
+                return $this->superAdminController->show($user->id);
         }
     }
 

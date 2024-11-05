@@ -97,9 +97,31 @@ class AdminController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Admin $admin)
+    public function show(string $id)
     {
-        //
+        $user_search = User::with(['role'])
+        ->where('id', $id)
+        ->get()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'role' => $user->role->role,
+                'first_name' => $user->first_name,
+                'middle_name' => $user->middle_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'dob' => $user->dob,
+                'age' => $user->age,
+                'sex' => $user->sex,
+                'c_address' => $user->c_address,
+                'h_address' => $user->h_address,
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Data retrieved successfully.',
+            'data' => $user_search
+        ]);
     }
 
     /**
