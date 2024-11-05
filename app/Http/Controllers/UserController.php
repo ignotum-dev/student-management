@@ -8,66 +8,44 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function __construct()
+    protected $programChairController;
+    protected $deanController;
+    protected $adminController;
+    protected $superAdminController;
+    
+
+    public function __construct(ProgramChairController $programChairController, DeanController $deanController, AdminController $adminController, SuperAdminController $superAdminController)
     {
         $this->middleware('auth:sanctum');
         $this->authorizeResource(User::class, 'user');
+        $this->programChairController = $programChairController;
+        $this->deanController = $deanController;
+        $this->adminController = $adminController;
+        $this->superAdminController = $superAdminController;
     }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {      
         $user = auth()->user();
         // $this->authorize('index-student', $user);
-
-        if ($user->role_id === 1) {
-            return response()->json([
-                'message' => 'Not authorized to view the data.',
-                'status' => 403,
-                'data' => null
-            ]);
-        }
         
-        if ($user->role_id === 2) {
-            return response()->json([
-                'message' => 'Data retrieved successfully.',
-                'status' => 200,
-                'data' => User::where('role_id', 1)
-                ->get()
-            ]);
+        if ($user->isProgramChair()) {
+            return $this->programChairController->index();
         }
 
-        if ($user->role_id === 3) {
-            return response()->json([
-                'message' => 'Data retrieved successfully.',
-                'status' => 200,
-                'data' => User::
-                where('role_id', 1)
-                ->orWhere('role_id', 2)
-                ->get()
-            ]);
+        if ($user->isDean()) {
+            return $this->deanController->index();
         }
 
-        if ($user->role_id === 4) {
-            return response()->json([
-                'message' => 'Data retrieved successfully.',
-                'status' => 200,
-                'data' => User::
-                where('role_id', 1)
-                ->orWhere('role_id', 2)
-                ->orWhere('role_id', 3)
-                ->get()
-            ]);
+        if ($user->isAdmin()) {
+            return $this->adminController->index();
         }
 
-        if ($user->role_id === 5) {
-            return response()->json([
-                'message' => 'Data retrieved successfully.',
-                'status' => 200,
-                'data' => User::all()
-            ]);
+        if ($user->isSuperAdmin()) {
+            return $this->superAdminController->index();
         }
     }
 
@@ -76,20 +54,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = auth()->user();
+        // $user = auth()->user();
 
-        $this->authorize('index-student', $user);
+        // $this->authorize('index-student', $user);
         
         $validatedData = $request->validate([
-            'role_id' => 'required|numeric|exists:courses,id',
-            'course_id' => 'required|numeric|exists:courses,id',
-            'user_number' => 'required|string|max:255|unique:users,user_number',
+            'role_id' => 'required|numeric|exists:roles,id',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',  // User email
             'password' => 'required|string|min:8|confirmed', // Password confirmation
-            'year' => 'required|in:First Year,Second Year,Third Year,Fourth Year',
             'dob' => 'required|date',
             'age' => 'required|integer|min:18|max:100',
             'sex' => 'required|in:Male,Female',
@@ -113,7 +88,6 @@ class UserController extends Controller
         if ($user->role_id === 1) {
             return response()->json([
                 'message' => 'Data retrieved successfully.',
-                'status' => 200,
                 'data' => $user->makeHidden([
                     'role_id',
                     'email_verified_at',
@@ -123,7 +97,6 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'message' => 'Data retrieved successfully.',
-                'status' => 200,
                 'data' => $user->makeHidden([
                     'email_verified_at',
                     'created_at', 
@@ -138,15 +111,12 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'role_id' => 'required|numeric|exists:courses,id',
-            'course_id' => 'required|numeric|exists:courses,id',
-            'user_number' => 'required|string|max:255|unique:users,user_number',
+            'role_id' => 'required|numeric|exists:roles,id',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',  // User email
             'password' => 'required|string|min:8|confirmed', // Password confirmation
-            'year' => 'required|in:First Year,Second Year,Third Year,Fourth Year',
             'dob' => 'required|date',
             'age' => 'required|integer|min:18|max:100',
             'sex' => 'required|in:Male,Female',
