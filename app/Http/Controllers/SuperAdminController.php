@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\SuperAdmin;
 use Illuminate\Http\Request;
 
-class DeanController extends Controller
+class SuperAdminController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -55,13 +56,73 @@ class DeanController extends Controller
                 'h_address' => $user->h_address,
             ];
         });
-        
 
+        $deans = User::with(['role', 'dean', 'dean.department'])
+        ->where('role_id', 3)
+        ->get()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'role' => $user->role->role,
+                'first_name' => $user->first_name,
+                'middle_name' => $user->middle_name,
+                'last_name' => $user->last_name,
+                'department' => $user->dean->department->department,
+                'email' => $user->email,
+                'dob' => $user->dob,
+                'age' => $user->age,
+                'sex' => $user->sex,
+                'c_address' => $user->c_address,
+                'h_address' => $user->h_address,
+            ];
+        });
+
+        $admins = User::with(['role'])
+        ->where('role_id', 4)
+        ->get()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'role' => $user->role->role,
+                'first_name' => $user->first_name,
+                'middle_name' => $user->middle_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'dob' => $user->dob,
+                'age' => $user->age,
+                'sex' => $user->sex,
+                'c_address' => $user->c_address,
+                'h_address' => $user->h_address,
+            ];
+        });
+
+        $superAdmins = User::with(['role'])
+        ->where('role_id', 5)
+        ->get()
+        ->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'role' => $user->role->role,
+                'first_name' => $user->first_name,
+                'middle_name' => $user->middle_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'dob' => $user->dob,
+                'age' => $user->age,
+                'sex' => $user->sex,
+                'c_address' => $user->c_address,
+                'h_address' => $user->h_address,
+            ];
+        });
+        
         return response()->json([
             'message' => 'Data retrieved successfully.',
             'data' => [
                 'students' => $students,
-                'program_chairs' => $programChairs]
+                'program_chairs' => $programChairs,
+                'deans' => $deans,
+                'admins' => $admins,
+                'superAdmins' => $superAdmins]
         ]);
     }
 
@@ -76,7 +137,7 @@ class DeanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(SuperAdmin $superAdmin)
     {
         //
     }
@@ -84,7 +145,7 @@ class DeanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, SuperAdmin $superAdmin)
     {
         //
     }
@@ -92,7 +153,7 @@ class DeanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(SuperAdmin $superAdmin)
     {
         //
     }
