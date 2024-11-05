@@ -10,10 +10,10 @@ class Student extends Model
     use HasFactory;
 
     public function user() {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function course() {
-        return $this->belongsTo(Course::class);
+    public function courseDepartment() {
+        return $this->belongsTo(CourseDepartment::class);
     }
 }

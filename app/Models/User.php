@@ -54,13 +54,21 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function students() {
-        return $this->belongsTo(Student::class);
+    public function student() {
+        return $this->hasOne(Student::class);
     }
 
-    public function roles()
+    public function programChair() {
+        return $this->hasOne(ProgramChair::class);
+    }
+
+    public function dean() {
+        return $this->hasOne(Dean::class);
+    }
+
+    public function role()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsTo(Role::class);
     }
 
     public function isStudent()

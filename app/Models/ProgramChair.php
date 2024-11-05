@@ -10,7 +10,7 @@ class ProgramChair extends Model
     use HasFactory;
 
     public function user() {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function program() {
@@ -19,5 +19,9 @@ class ProgramChair extends Model
 
     public function department() {
         return $this->hasOne(Department::class);
+    }
+
+    public function courseDepartment() {
+        return $this->belongsTo(CourseDepartment::class);
     }
 }
