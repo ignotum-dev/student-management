@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Auth\Access\Response;
 
 class UserPolicy
@@ -24,7 +25,6 @@ class UserPolicy
      */
     public function view(User $current_user, User $user)
     {
-        // return [$current_user, $user];
         if ($current_user->isStudent()) {
             if ($current_user->id === $user->id) {
                 return true;
@@ -38,19 +38,19 @@ class UserPolicy
                 return false;
             }
         } elseif ($current_user->isDean()) {
-            if ($user->role_id === 1 || $user->role_id === 2 || $current_user->id === $user->id) {
+            if (in_array($user->role_id, [1, 2]) || $current_user->id === $user->id) {
                 return true;
             } else {
                 return false;
             }
         } elseif ($current_user->isAdmin()) {
-            if ($user->role_id === 1 || $user->role_id === 2 || $user->role_id === 3 || $current_user->id === $user->id) {
+            if (in_array($user->role_id, [1, 2, 3]) || $current_user->id === $user->id) {
                 return true;
             } else {
                 return false;
             }
         } elseif ($current_user->isSuperAdmin()) {
-            if ($user->role_id === 1 || $user->role_id === 2 || $user->role_id === 3 || $user->role_id === 4 || $current_user->id === $user->id) {
+            if (in_array($user->role_id, [1, 2, 3, 4, 5]) || $current_user->id === $user->id) {
                 return true;
             } else {
                 return false;
@@ -63,8 +63,10 @@ class UserPolicy
      */
     public function create(User $user)
     {
-        if(!$user->isStudent()) {
-            return $user->id;
+        if ($user->isStudent()) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -74,24 +76,35 @@ class UserPolicy
     public function update(User $current_user, User $user)
     {
         if ($current_user->isStudent()) {
-            return $current_user->id === $user->id;
-        }
-
-        if ($current_user->isProgramChair()) {
-            return $user->role_id === 1 || $current_user->id === $user->id;
-        }
-
-        if ($current_user->isDean()) {
-            return $user->role_id === 1 || $user->role_id === 2 || $current_user->id === $user->id;
-        }
-
-        if ($current_user->isAdmin()) {
-            return $user->role_id === 1 || $user->role_id === 2 || $user->role_id === 3 || $current_user->id === $user->id;
-        }
-
-        if ($current_user->isSuperAdmin()) {
-            return $user->role_id === 1 || $user->role_id === 2 ||$user->role_id === 3 ||$user->role_id === 4 ||
-            $user->role_id === 5;
+            if ($current_user->id === $user->id) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif ($current_user->isProgramChair()) {
+            if ($user->role_id === 1 || $current_user->id === $user->id) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif ($current_user->isDean()) {
+            if (in_array($user->role_id, [1, 2]) || $current_user->id === $user->id) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif ($current_user->isAdmin()) {
+            if (in_array($user->role_id, [1, 2, 3]) || $current_user->id === $user->id) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif ($current_user->isSuperAdmin()) {
+            if (in_array($user->role_id, [1, 2, 3, 4, 5]) || $current_user->id === $user->id) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

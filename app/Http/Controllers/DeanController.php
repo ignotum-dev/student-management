@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Course;
+use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Models\CourseDepartment;
+use Illuminate\Support\Facades\DB;
 
 class DeanController extends Controller
 {
@@ -40,7 +44,7 @@ class DeanController extends Controller
         ->get()
         ->map(function ($user) {
             return [
-                'id' => $user->id,
+                // 'id' => $user->id,
                 'role' => $user->role->role,
                 'first_name' => $user->first_name,
                 'middle_name' => $user->middle_name,
@@ -83,7 +87,7 @@ class DeanController extends Controller
         ->get()
         ->map(function ($user) {
             return [
-                'id' => $user->id,
+                // 'id' => $user->id,
                 'role' => $user->role->role,
                 'first_name' => $user->first_name,
                 'middle_name' => $user->middle_name,
@@ -107,9 +111,53 @@ class DeanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(array $validatedData, $id, $auth_user)
     {
-        //
+         // Fetch existing user details
+         $user = User::findOrFail($id);
+         $dean = $user->dean; 
+
+         // Find the department and course based on input
+         $department = Department::where('department', $validatedData['department'])->first();
+         $course = Course::where('course', $validatedData['course'])->first();
+         $courseDepartment = CourseDepartment::where([
+             ['department_id', $department->id],
+             ['course_id', $course->id],
+         ])->first();
+ 
+         if (!$courseDepartment)
+             return response()->json(['message' => 'The selected department and course is not match.'], 422);
+ 
+         // Begin transaction for user and related entity updates
+         DB::transaction(function () use ($validatedData, $user, $department, $dean) {
+             // Update basic user details
+             $user->update([
+                 'first_name' => $validatedData['first_name'],
+                 'middle_name' => $validatedData['middle_name'],
+                 'last_name' => $validatedData['last_name'],
+                 'email' => $validatedData['email'],
+                 // 'password' => isset($validatedData['password']) ? Hash::make($validatedData['password']) : $user->password, // Update password if provided
+                 'dob' => $validatedData['dob'],
+                 'age' => $validatedData['age'],
+                 'sex' => $validatedData['sex'],
+                 'c_address' => $validatedData['c_address'],
+                 'h_address' => $validatedData['h_address'],
+             ]);
+
+             $dean->update([
+                'department_id' => $department->id,
+            ]);
+ 
+            // // Update program chair details if applicable
+            // if ($user->isProgramChair()) {
+            //     $programChair = $user->programChair;
+            //     $programChair->update([
+            //         'course_department_id' => $courseDepartment->id,
+            //     ]);
+            // }
+         });
+ 
+         return response()->json(['message' => 'User updated successfully!'], 200);
     }
 
     /**

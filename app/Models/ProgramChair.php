@@ -9,6 +9,11 @@ class ProgramChair extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'course_department_id'
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }
