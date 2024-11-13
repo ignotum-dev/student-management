@@ -10,7 +10,10 @@ class Dean extends Model
     use HasFactory;
 
     protected $fillable = [
+<<<<<<< HEAD
         'user_id',
+=======
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
         'department_id',
     ];
 

@@ -100,7 +100,11 @@ class UserPolicy
                 return false;
             }
         } elseif ($current_user->isSuperAdmin()) {
+<<<<<<< HEAD
             if (in_array($user->role_id, [1, 2, 3, 4, 5])) {
+=======
+            if (in_array($user->role_id, [1, 2, 3, 4, 5]) || $current_user->id === $user->id) {
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
                 return true;
             } else {
                 return false;
