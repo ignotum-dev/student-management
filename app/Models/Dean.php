@@ -9,6 +9,11 @@ class Dean extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'department_id',
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }
