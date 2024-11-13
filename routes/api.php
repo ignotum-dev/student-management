@@ -32,5 +32,3 @@ Route::apiResource('courses', CourseController::class);
 Route::apiResource('roles', RoleController::class);
 
 Route::apiResource('users', UserController::class);
-
-// Route::put('/update/{id}', [UserController::class,'updates']);

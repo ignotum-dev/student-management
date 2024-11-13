@@ -28,12 +28,9 @@ class UserCreateController extends Controller
             ['course_id', $course_id],
         ])->first();
 
-<<<<<<< HEAD
         if (!$course_departments)
              return response()->json(['message' => 'The selected department and course is not match.'], 422);
 
-=======
->>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
         DB::transaction(function () use ($validatedData, $role, $department_id, $course_departments) {
             $user = User::create([
                 'role_id' => $role->id,
