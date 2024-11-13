@@ -18,7 +18,7 @@ class RoleSeeder extends Seeder
             'program chair',
             'dean',
             'admin',
-            'super_admin'
+            'super admin'
         ];
 
         foreach ($courses as $course) {
