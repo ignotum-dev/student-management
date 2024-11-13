@@ -2,9 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
+use App\Models\Course;
+use App\Models\Student;
+use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Models\CourseDepartment;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UpdateDeanRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateAdminRequest;
+use App\Http\Requests\UpdateStudentRequest;
+use App\Http\Requests\UpdateSuperAdminRequest;
+use App\Http\Requests\UpdateProgramChairRequest;
 
 class UserController extends Controller
 {
@@ -13,9 +26,12 @@ class UserController extends Controller
     protected $deanController;
     protected $adminController;
     protected $superAdminController;
+    protected $userCreateController;
+    protected $userRoleUpdateController;
+
     
 
-    public function __construct(StudentController $studentController, ProgramChairController $programChairController, DeanController $deanController, AdminController $adminController, SuperAdminController $superAdminController)
+    public function __construct(StudentController $studentController, ProgramChairController $programChairController, DeanController $deanController, AdminController $adminController, SuperAdminController $superAdminController, UserCreateController $userCreateController, UserRoleUpdateController $userRoleUpdateController)
     {
         $this->middleware('auth:sanctum');
         $this->authorizeResource(User::class, 'user');
@@ -24,6 +40,8 @@ class UserController extends Controller
         $this->deanController = $deanController;
         $this->adminController = $adminController;
         $this->superAdminController = $superAdminController;
+        $this->userCreateController = $userCreateController;
+        $this->userRoleUpdateController = $userRoleUpdateController;
     }
 
     /**
@@ -56,28 +74,32 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // $user = auth()->user();
-        // $this->authorize('index-student', $user);
-        
-        $validatedData = $request->validate([
-            'role_id' => 'required|numeric|exists:roles,id',
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',  // User email
-            'password' => 'required|string|min:8|confirmed', // Password confirmation
-            'dob' => 'required|date',
-            'age' => 'required|integer|min:18|max:100',
-            'sex' => 'required|in:Male,Female',
-            'c_address' => 'required|string|max:255',
-            'h_address' => 'required|string|max:255', 
-        ]);    
-        
-        $validatedData['password'] = Hash::make($validatedData['password']);
+        $user = auth()->user();
 
-        User::create($validatedData);
-
-        return response()->json(['message' => 'User created successfully!'], 201);
+        if ($request->role == 'student')
+            return $this->userCreateController->store($request);
+        elseif ($request->role == 'program chair')
+            if ($user->isProgramChair())
+                return response()->json(['message' => 'Unauthorized Access'], 403);
+            else
+                return $this->userCreateController->store($request);
+        elseif ($request->role == 'dean')
+            if ($user->isProgramChair() || $user->isDean())
+                return response()->json(['message' => 'Unauthorized Access'], 403);
+            else
+                return $this->userCreateController->store($request);
+        elseif ($request->role == 'admin')
+            if ($user->isProgramChair() || $user->isDean() || $user->isAdmin())
+                return response()->json(['message' => 'Unauthorized Access'], 403);
+            else
+                return $this->userCreateController->store($request);
+        elseif ($request->role == 'super admin')
+            if (!$user->isSuperAdmin())
+                return response()->json(['message' => 'Unauthorized Access'], 403);
+            else
+                return $this->userCreateController->store($request);
+        else
+            return response()->json(['message' => 'Invalid Role'], 400);
     }
 
     /**
@@ -134,27 +156,71 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $validatedData = $request->validate([
-            'role_id' => 'required|numeric|exists:roles,id',
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',  // User email
-            'password' => 'required|string|min:8|confirmed', // Password confirmation
-            'dob' => 'required|date',
-            'age' => 'required|integer|min:18|max:100',
-            'sex' => 'required|in:Male,Female',
-            'c_address' => 'required|string|max:255',
-            'h_address' => 'required|string|max:255', 
-        ]);    
-        
-        $validatedData['password'] = Hash::make($validatedData['password']);
+    public function update(Request $request, User $user)
+    {     
+        // return $this->userUpdateController->update($request, $user->id);
 
-        User::update($validatedData);
+        $auth_user = auth()->user();
 
-        return response()->json(['message' => 'User updated successfully!'], 200);
+        if ($auth_user->isStudent()) {
+            $validatedData = app(UpdateStudentRequest::class)->validated();
+            return $this->studentController->update($validatedData, $user->id, $auth_user);
+        } elseif ($auth_user->isProgramChair()) {
+            if ($user->isStudent()) {
+                $validatedData = app(UpdateStudentRequest::class)->validated();
+                return $this->studentController->update($validatedData, $user->id, $auth_user);
+            } else {
+                $validatedData = app(UpdateProgramChairRequest::class)->validated();
+                return $this->programChairController->update($validatedData, $user->id, $auth_user);
+            }
+        } elseif ($auth_user->isDean()) {
+            if ($user->isStudent()) {
+                $validatedData = app(UpdateStudentRequest::class)->validated();
+                return $this->studentController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isProgramChair()){
+                $validatedData = app(UpdateProgramChairRequest::class)->validated();
+                return $this->programChairController->update($validatedData, $user->id, $auth_user);
+            } else {
+                $validatedData = app(UpdateDeanRequest::class)->validated();
+                return $this->deanController->update($validatedData, $user->id, $auth_user);
+            }
+        } elseif ($auth_user->isAdmin()) {
+            if ($user->isStudent()) {
+                $validatedData = app(UpdateStudentRequest::class)->validated();
+                return $this->studentController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isProgramChair()){
+                $validatedData = app(UpdateProgramChairRequest::class)->validated();
+                return $this->programChairController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isDean()) {
+                $validatedData = app(UpdateDeanRequest::class)->validated();
+                return $this->deanController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isAdmin()) {
+                $validatedData = app(UpdateAdminRequest::class)->validated();
+                return $this->adminController->update($validatedData, $user->id, $auth_user);
+            }
+        } elseif ($auth_user->isSuperAdmin()) {
+            if ($user->isStudent()) {
+                $validatedData = app(UpdateStudentRequest::class)->validated();
+                $this->userRoleUpdateController->update($validatedData, $user);
+                return $this->studentController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isProgramChair()) {
+                $validatedData = app(UpdateProgramChairRequest::class)->validated();
+                $this->userRoleUpdateController->update($validatedData, $user);
+                return $this->programChairController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isDean()) {
+                $validatedData = app(UpdateDeanRequest::class)->validated();
+                $this->userRoleUpdateController->update($validatedData, $user);
+                return $this->deanController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isAdmin()) {
+                $validatedData = app(UpdateAdminRequest::class)->validated();
+                $this->userRoleUpdateController->update($validatedData, $user);
+                return $this->adminController->update($validatedData, $user->id, $auth_user);
+            } elseif ($user->isSuperAdmin()) {
+                $validatedData = app(UpdateSuperAdminRequest::class)->validated();
+                $this->userRoleUpdateController->update($validatedData, $user);
+                return $this->superAdminController->update($validatedData, $user->id, $auth_user);
+            }
+        }
     }
 
     /**
