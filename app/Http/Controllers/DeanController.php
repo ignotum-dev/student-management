@@ -118,12 +118,15 @@ class DeanController extends Controller
          $user = User::findOrFail($id);
          $dean = $user->dean; 
 
+<<<<<<< HEAD
         // Handle role changes for super admin only
         if ($auth_user->isSuperAdmin() && isset($validatedData['role'])) {
             $role = Role::where('role', $validatedData['role'])->first();
             $user->role()->associate($role);  // Update user role
         }
 
+=======
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
          // Find the department and course based on input
          $department = Department::where('department', $validatedData['department'])->first();
          $course = Course::where('course', $validatedData['course'])->first();
@@ -149,12 +152,20 @@ class DeanController extends Controller
                  'sex' => $validatedData['sex'],
                  'c_address' => $validatedData['c_address'],
                  'h_address' => $validatedData['h_address'],
+<<<<<<< HEAD
                  'department_id' => $department->id,
              ]);
 
             //  $dean->update([
             //     'department_id' => $department->id,
             // ]);
+=======
+             ]);
+
+             $dean->update([
+                'department_id' => $department->id,
+            ]);
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
  
             // // Update program chair details if applicable
             // if ($user->isProgramChair()) {

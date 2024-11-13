@@ -16,7 +16,10 @@ use App\Http\Requests\UpdateDeanRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Http\Requests\UpdateStudentRequest;
+<<<<<<< HEAD
 use App\Http\Requests\UpdateSuperAdminRequest;
+=======
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
 use App\Http\Requests\UpdateProgramChairRequest;
 
 class UserController extends Controller
@@ -27,11 +30,18 @@ class UserController extends Controller
     protected $adminController;
     protected $superAdminController;
     protected $userCreateController;
+<<<<<<< HEAD
     protected $userRoleUpdateController;
 
     
 
     public function __construct(StudentController $studentController, ProgramChairController $programChairController, DeanController $deanController, AdminController $adminController, SuperAdminController $superAdminController, UserCreateController $userCreateController, UserRoleUpdateController $userRoleUpdateController)
+=======
+    protected $userUpdateController;
+    
+
+    public function __construct(StudentController $studentController, ProgramChairController $programChairController, DeanController $deanController, AdminController $adminController, SuperAdminController $superAdminController, UserCreateController $userCreateController, UserUpdateController $userUpdateController)
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
     {
         $this->middleware('auth:sanctum');
         $this->authorizeResource(User::class, 'user');
@@ -41,7 +51,11 @@ class UserController extends Controller
         $this->adminController = $adminController;
         $this->superAdminController = $superAdminController;
         $this->userCreateController = $userCreateController;
+<<<<<<< HEAD
         $this->userRoleUpdateController = $userRoleUpdateController;
+=======
+        $this->userUpdateController = $userUpdateController;
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
     }
 
     /**
@@ -198,6 +212,7 @@ class UserController extends Controller
                 $validatedData = app(UpdateAdminRequest::class)->validated();
                 return $this->adminController->update($validatedData, $user->id, $auth_user);
             }
+<<<<<<< HEAD
         } elseif ($auth_user->isSuperAdmin()) {
             if ($user->isStudent()) {
                 $validatedData = app(UpdateStudentRequest::class)->validated();
@@ -220,6 +235,8 @@ class UserController extends Controller
                 $this->userRoleUpdateController->update($validatedData, $user);
                 return $this->superAdminController->update($validatedData, $user->id, $auth_user);
             }
+=======
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
         }
     }
 

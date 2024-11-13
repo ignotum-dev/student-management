@@ -95,12 +95,15 @@ class ProgramChairController extends Controller
          $user = User::findOrFail($id);
          $programChair = $user->programChair; 
 
+<<<<<<< HEAD
         // Handle role changes for super admin only
         if ($auth_user->isSuperAdmin() && isset($validatedData['role'])) {
             $role = Role::where('role', $validatedData['role'])->first();
             $user->role()->associate($role);  // Update user role
         }
 
+=======
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
          // Find the department and course based on input
          $department = Department::where('department', $validatedData['department'])->first();
          $course = Course::where('course', $validatedData['course'])->first();

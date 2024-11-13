@@ -41,6 +41,7 @@ class UpdateDeanRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->user;
+<<<<<<< HEAD
         $student = $this->student;
 
         return [
@@ -52,6 +53,12 @@ class UpdateDeanRequest extends FormRequest
                 'unique:students,student_number,',
                 // Rule::unique('students', 'student_number')->ignore($student->student_number),
             ],
+=======
+        // $programChair = $this->programChair;
+
+        return [
+            'role' => 'sometimes|string|exists:roles,role',
+>>>>>>> d3f1ffb5e7265c7b67bee239ff3fbc563bf4d133
             'first_name' => 'sometimes|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'sometimes|string|max:255',
