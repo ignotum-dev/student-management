@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)
                 ->constrained()
                 ->onDelete('cascade');
+            $table->unique('user_id');
             $table->foreignIdFor(CourseDepartment::class)
                 ->constrained()
                 ->onDelete('cascade');
