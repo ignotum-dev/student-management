@@ -1,66 +1,118 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel 10 - Student Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This document defines the access control and permissions for various user roles in the Student Management API. The roles, permissions, and CRUD operations are outlined below, detailing the specific actions each role can perform.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Roles
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The system includes the following roles, each with unique permissions:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Student**
+2. **Program Chair**
+3. **Dean**
+4. **Admin**
+5. **Super Admin**
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Permissions
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+The permissions for each role are categorized as follows:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Viewing Records**: Permissions to view lists or individual records.
+- **Creating Users**: Permissions to create new users of specific roles.
+- **Updating Users**: Permissions to modify user data.
+- **Deleting Users**: Permissions to remove users from the system.
 
-## Laravel Sponsors
+### 1. Viewing Records (`index`)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Overview
+- **Student**: Cannot view any records.
+- **Program Chair**: Can only view student records.
+- **Dean**: Can view student and program chair records.
+- **Admin**: Can view student, program chair, and dean records.
+- **Super Admin**: Can view all records.
 
-### Premium Partners
+| Role           | View Student Records | View Program Chair Records | View Dean Records | View Admin Records | View Super Admin Records |
+|----------------|----------------------|----------------------------|-------------------|--------------------|--------------------------|
+| Student        | ❌                   | ❌                         | ❌                | ❌                 | ❌                       |
+| Program Chair  | ✅                   | ❌                         | ❌                | ❌                 | ❌                       |
+| Dean           | ✅                   | ✅                         | ❌                | ❌                 | ❌                       |
+| Admin          | ✅                   | ✅                         | ✅                | ❌                 | ❌                       |
+| Super Admin    | ✅                   | ✅                         | ✅                | ✅                 | ✅                       |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 2. Viewing Individual Records (`show`)
 
-## Contributing
+#### Overview
+- **Student**: Can only view their own record.
+- **Program Chair**: Can view any student record and their own.
+- **Dean**: Can view any student, program chair record, and their own.
+- **Admin**: Can view any student, program chair, dean record, and their own.
+- **Super Admin**: Can view any individual record.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Role           | View Own Record | View Student Records | View Program Chair Records | View Dean Records | View Admin Records | View Super Admin Records |
+|----------------|-----------------|----------------------|----------------------------|-------------------|--------------------|--------------------------|
+| Student        | ✅              | ❌                   | ❌                         | ❌                | ❌                 | ❌                       |
+| Program Chair  | ✅              | ✅                   | ❌                         | ❌                | ❌                 | ❌                       |
+| Dean           | ✅              | ✅                   | ✅                         | ❌                | ❌                 | ❌                       |
+| Admin          | ✅              | ✅                   | ✅                         | ✅                | ❌                 | ❌                       |
+| Super Admin    | ✅              | ✅                   | ✅                         | ✅                | ✅                 | ✅                       |
 
-## Code of Conduct
+### 3. Creating Users
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Overview
+- **Student**: Cannot create any users.
+- **Program Chair**: Can create student users only.
+- **Dean**: Can create student and program chair users only.
+- **Admin**: Can create any user except for admin and super admin.
+- **Super Admin**: Can create users of any role.
 
-## Security Vulnerabilities
+| Role           | Create Student | Create Program Chair | Create Dean | Create Admin | Create Super Admin |
+|----------------|----------------|----------------------|-------------|--------------|---------------------|
+| Student        | ❌             | ❌                   | ❌          | ❌           | ❌                  |
+| Program Chair  | ✅             | ❌                   | ❌          | ❌           | ❌                  |
+| Dean           | ✅             | ✅                   | ❌          | ❌           | ❌                  |
+| Admin          | ✅             | ✅                   | ✅          | ❌           | ❌                  |
+| Super Admin    | ✅             | ✅                   | ✅          | ✅           | ✅                  |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Updating Users
 
-## License
+#### Overview
+- **Role updates**: Only allowed by the super admin.
+- **Student number updates**: Allowed by dean, admin, and super admin only.
+- **Student**: Can only update their own record.
+- **Program Chair**: Can update student records and their own record.
+- **Dean**: Can update student, program chair records, and their own record.
+- **Admin**: Can update student, program chair, dean records, and their own.
+- **Super Admin**: Can update any record.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Role           | Update Own Record | Update Student Records | Update Program Chair Records | Update Dean Records | Update Admin Records | Update Super Admin Records |
+|----------------|-------------------|------------------------|------------------------------|---------------------|----------------------|----------------------------|
+| Student        | ✅                | ❌                     | ❌                           | ❌                  | ❌                   | ❌                         |
+| Program Chair  | ✅                | ✅                     | ❌                           | ❌                  | ❌                   | ❌                         |
+| Dean           | ✅                | ✅                     | ✅                           | ❌                  | ❌                   | ❌                         |
+| Admin          | ✅                | ✅                     | ✅                           | ✅                  | ❌                   | ❌                         |
+| Super Admin    | ✅                | ✅                     | ✅                           | ✅                  | ✅                   | ✅                         |
+
+### 5. Deleting Users
+
+#### Overview
+- **Student and Program Chair**: Cannot delete any records.
+- **Dean**: Can only delete student and program chair records.
+- **Admin**: Can delete student, program chair, and dean records.
+- **Super Admin**: Can delete any record.
+
+| Role           | Delete Student Records | Delete Program Chair Records | Delete Dean Records | Delete Admin Records | Delete Super Admin Records |
+|----------------|------------------------|------------------------------|---------------------|----------------------|----------------------------|
+| Student        | ❌                     | ❌                           | ❌                  | ❌                   | ❌                         |
+| Program Chair  | ❌                     | ❌                           | ❌                  | ❌                   | ❌                         |
+| Dean           | ✅                     | ✅                           | ❌                  | ❌                   | ❌                         |
+| Admin          | ✅                     | ✅                           | ✅                  | ❌                   | ❌                         |
+| Super Admin    | ✅                     | ✅                           | ✅                  | ✅                   | ✅                         |
+
+---
+
+## Summary
+
+This permission matrix defines the access levels and restrictions for each user role within the Laravel 10 Student Management API. Implementing this structure ensures controlled access to sensitive information and enforces hierarchical authorization to protect data integrity.
