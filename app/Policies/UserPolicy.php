@@ -111,11 +111,27 @@ class UserPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model)
+    public function delete(User $current_user, User $user)
     {
-        //
+        if ($current_user->isDean()) {
+            if ($user->isStudent() || $user->isProgramChair()) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif ($current_user->isAdmin()) {
+            if (!$user->isAdmin() && !$user->isSuperAdmin()) {
+                return true;
+            } else {
+                return false;
+            }
+        } elseif ($current_user->isSuperAdmin()) {
+            return true;
+        } else {
+            return false;
+        }
     }
-
+    // !$auth_user->isStudent() || !$auth_user->isProgramChair()
     /**
      * Determine whether the user can restore the model.
      */
