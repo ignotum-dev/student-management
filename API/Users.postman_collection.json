@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "b4287b47-8953-419c-ad29-d2b817557236",
+		"name": "Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38551911"
+	},
+	"item": [
+		{
+			"name": "Users Index",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host api}}/users",
+					"host": [
+						"{{host api}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users Show",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host api}}/users/8",
+					"host": [
+						"{{host api}}"
+					],
+					"path": [
+						"users",
+						"8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users Store",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"role\": \"student\",\r\n    \"student_number\": \"0122301576\",\r\n    \"first_name\": \"Gerald Ivan\",\r\n    \"middle_name\": null,\r\n    \"last_name\": \"Flores\",\r\n    \"department\": \"College of Business\",\r\n    \"course\": \"BS in Accountancy\",\r\n    \"year\": \"First Year\",\r\n    \"email\": \"gfloressss@spcf.edu.ph\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\",\r\n    \"dob\": \"2003-10-26\",\r\n    \"age\": 21,\r\n    \"sex\": \"Male\",\r\n    \"c_address\": \"98620 Oberbrunner Coves\\nPort Kelly, AL 84880-8844\",\r\n    \"h_address\": \"5409 Macie Camp\\nKovacekstad, KS 21453\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host api}}/users",
+					"host": [
+						"{{host api}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    // \"role\": \"student\",\r\n    // \"student_number\": \"0122354251\",\r\n    \"first_name\": \"Willissssss\",\r\n    \"middle_name\": \"Fucks\",\r\n    \"last_name\": \"Cristss\",\r\n    \"department\": \"College of Computing and Information Sciences\",\r\n    \"course\": \"BS in Computer Science\",\r\n    \"year\": \"Third Year\",\r\n    \"email\": \"rice.aletha@examples.com\",\r\n    \"dob\": \"1994-04-21\",\r\n    \"age\": 30,\r\n    \"sex\": \"Male\",\r\n    \"c_address\": \"98620 Oberbrunner Coves\\nPort Kelly, AL 84880-8844\",\r\n    \"h_address\": \"5409 Macie Camp\\nKovacekstad, KS 21453\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host api}}/users/2",
+					"host": [
+						"{{host api}}"
+					],
+					"path": [
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users Destroy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host api}}/users/20",
+					"host": [
+						"{{host api}}"
+					],
+					"path": [
+						"users",
+						"20"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
