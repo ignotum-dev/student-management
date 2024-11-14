@@ -43,7 +43,7 @@ class UpdateSuperAdminRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->user;
-        $student = $this->student;
+        // $student = $this->student;
 
         return [
             'role' => 'sometimes|string|exists:roles,role',
