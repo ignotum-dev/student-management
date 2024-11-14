@@ -126,11 +126,12 @@ class ProgramChairController extends Controller
                  'sex' => $validatedData['sex'],
                  'c_address' => $validatedData['c_address'],
                  'h_address' => $validatedData['h_address'],
+                 'course_department_id' => $courseDepartment->id,
              ]);
 
-            $programChair->update([
-                'course_department_id' => $courseDepartment->id,
-            ]);
+            // $programChair->update([
+            //     'course_department_id' => $courseDepartment->id,
+            // ]);
          });
  
          return response()->json(['message' => 'User updated successfully!'], 200);
