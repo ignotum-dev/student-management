@@ -128,40 +128,10 @@ class StudentController extends Controller
         return response()->json(['message' => 'User updated successfully!'], 200);
     }
 
-        // // Method for validating the update request
-        // private function validateRequest(Request $request, User $user, $student)
-        // {
-        //     return $request->validate([
-        //         'role' => 'string|exists:roles,role',
-        //         'student_number' => [
-        //             'string',
-        //             'max:10',
-        //             'unique:students,student_number,' . $student->id,
-        //             // Rule::unique('students', 'student_number')->ignore($student->student_number),
-        //         ],
-        //         'first_name' => 'string|max:255',
-        //         'middle_name' => 'nullable|string|max:255',
-        //         'last_name' => 'string|max:255',
-        //         'email' => [
-        //             'email',
-        //             'unique:users,email,' . $user->id,
-        //         ],
-        //         // 'password' => 'nullable|string|min:8|confirmed',
-        //         'course' => 'string|exists:courses,course',
-        //         'department' => 'string|exists:departments,department',
-        //         'year' => 'in:First Year,Second Year,Third Year,Fourth Year',
-        //         'dob' => 'date',
-        //         'age' => 'integer|min:18|max:100',
-        //         'sex' => 'in:Male,Female',
-        //         'c_address' => 'string|max:255',
-        //         'h_address' => 'string|max:255',
-        //     ]);
-        // }
-
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
         //
     }
